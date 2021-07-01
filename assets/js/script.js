@@ -69,11 +69,14 @@ function getUserInput() {
   do {
     retry = validPasswordLength = false;
     let inputValue = prompt("How long would you like your password to be? (8-128 characters)", "8");
-    let error = parsePasswordLengthInput(inputValue);
-    validPasswordLength = error === "";
 
-    if (!validPasswordLength) {
-      retry = confirm(`${error} Click 'OK to enter a different length or click 'Cancel' to exit.`);
+    if (inputValue) {
+      let error = parsePasswordLengthInput(inputValue);
+      validPasswordLength = error === "";
+
+      if (!validPasswordLength) {
+        retry = confirm(`${error} Click 'OK to enter a different length or click 'Cancel' to exit.`);
+      }
     }
   } while (retry);
   console.log(`Password Length: ${passwordDetails.desiredPasswordLength}`);
