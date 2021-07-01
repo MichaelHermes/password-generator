@@ -60,7 +60,7 @@ function initializePasswordDetails() {
 }
 
 // Obtains user input to configure the password generation criteria and desired password length.
-// Returns true if at least one criteria was selected AND the desired password length is between 8 and 128 (inclusive).
+// Returns true if at least one criteria was selected AND the desired password length is between 8 and 128 (inclusive). 
 function getUserInput() {
   let retry;
   let validPasswordLength;
