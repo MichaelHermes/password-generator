@@ -63,43 +63,60 @@ function initializePasswordDetails() {
 // Returns true if at least one criteria was selected AND the desired password length is between 8 and 128 (inclusive).
 function getUserInput() {
   let retry;
+  let validPasswordLength;
 
+  // Ask the user for the password length. Validate to ensure they entered a valid number between 8-128.
   do {
-    // Attempt to gather password criteria from the customer.
-    retry = false;
-    passwordDetails.criteria.includeLowercase = confirm("Would you like to include lowercase characters in your password?");
-    passwordDetails.criteria.includeUppercase = confirm("Would you like to include uppercase characters in your password?");
-    passwordDetails.criteria.includeNumeric = confirm("Would you like to include numeric characters in your password?");
-    passwordDetails.criteria.includeSpecial = confirm("Would you like to include special characters in your password?");
-    console.log(`Criteria:\nincludeLowercase: ${passwordDetails.criteria.includeLowercase}\nincludeUppercase: ${passwordDetails.criteria.includeUppercase}\nincludeNumeric: ${passwordDetails.criteria.includeNumeric}\nincludeSpecial: ${passwordDetails.criteria.includeSpecial}\nisCriteriaValid: ${passwordDetails.criteria.isCriteriaValid()}`);
+    retry = validPasswordLength = false;
+    let inputValue = prompt("How long would you like your password to be? (8-128 characters)", "8");
+    let error = parsePasswordLengthInput(inputValue);
+    validPasswordLength = error === "";
 
-    // If they didn't select at least one criteria to include, ask them to retry.
-    if (!passwordDetails.criteria.isCriteriaValid()) {
-      retry = confirm("At least one password criteria must be included. Would you like to try again?");
+    if (!validPasswordLength) {
+      retry = confirm(`${error} Click 'OK to enter a different length or click 'Cancel' to exit.`);
     }
-  } while (!passwordDetails.criteria.isCriteriaValid() && retry);
+  } while (retry);
+  console.log(`Password Length: ${passwordDetails.desiredPasswordLength}`);
 
-  // As long as valid password criteria selections were made, ask for the password length.
-  if (passwordDetails.criteria.isCriteriaValid()) {
+  // As long as a valid password length was obtained, ask for the password criteria.
+  if (validPasswordLength) {
     do {
+      // Attempt to gather password criteria from the customer.
       retry = false;
-      let length = prompt("How long would you like your password to be? (8-128 characters)", "8");
+      passwordDetails.criteria.includeLowercase = confirm("Would you like to include lowercase characters in your password?");
+      passwordDetails.criteria.includeUppercase = confirm("Would you like to include uppercase characters in your password?");
+      passwordDetails.criteria.includeNumeric = confirm("Would you like to include numeric characters in your password?");
+      passwordDetails.criteria.includeSpecial = confirm("Would you like to include special characters in your password?");
+      console.log(`Criteria:\nincludeLowercase: ${passwordDetails.criteria.includeLowercase}\nincludeUppercase: ${passwordDetails.criteria.includeUppercase}\nincludeNumeric: ${passwordDetails.criteria.includeNumeric}\nincludeSpecial: ${passwordDetails.criteria.includeSpecial}\nisCriteriaValid: ${passwordDetails.criteria.isCriteriaValid()}`);
 
-      if (length) {
-        // If a length was entered, but didn't meet the "8 < x < 128" requirements, ask them to retry.
-        if (length < 8 || length > 128) {
-          retry = confirm("Password length must be between 8-128 characters. Would you like to enter a different value?");
-        }
-        else {
-          passwordDetails.desiredPasswordLength = length;
-        }
+      // If they didn't select at least one criteria to include, ask them to retry.
+      if (!passwordDetails.criteria.isCriteriaValid()) {
+        retry = confirm("At least one password criteria must be included. Click 'OK' to reselect criteria or click 'Cancel' to exit.");
       }
-    } while (retry);
-    console.log(`Password Length: ${passwordDetails.desiredPasswordLength}`);
+    } while (!passwordDetails.criteria.isCriteriaValid() && retry);
   }
 
-  // Input was successfully gathered only if valid criteria were selected AND the password length was valid.
-  return passwordDetails.criteria.isCriteriaValid() && !isNaN(passwordDetails.desiredPasswordLength);
+  // Input was successfully gathered only if the password length was valid AND valid criteria were selected.
+  return validPasswordLength && passwordDetails.criteria.isCriteriaValid();
+}
+
+function parsePasswordLengthInput(inputValue) {
+  let number = parseInt(inputValue);
+  let error = "";
+
+  if (isNaN(number)) {
+    error = "A valid number must be entered.";
+  }
+  else {
+    if (number < 8 || number > 128) {
+      error = "Password length must be between 8-128 characters.";
+    }
+    else {
+      passwordDetails.desiredPasswordLength = number;
+    }
+  }
+
+  return error;
 }
 
 // This function generates a single random password character at at time. Looping this method will generate a password of the desired length.
