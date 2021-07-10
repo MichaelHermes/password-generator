@@ -23,7 +23,6 @@ function generatePassword() {
 
   // Reset the passwordDetails object to a "clean slate" for the current password generation attempt.
   initializePasswordDetails();
-  console.log(passwordDetails.datasets);
 
   // Gather user input, including criteria and desired password length.
   if (getUserInput()) {
@@ -79,7 +78,6 @@ function getUserInput() {
       }
     }
   } while (retry);
-  console.log(`Password Length: ${passwordDetails.desiredPasswordLength}`);
 
   // As long as a valid password length was obtained, ask for the password criteria.
   if (validPasswordLength) {
@@ -90,7 +88,6 @@ function getUserInput() {
       passwordDetails.criteria.includeUppercase = confirm("Would you like to include uppercase characters in your password?");
       passwordDetails.criteria.includeNumeric = confirm("Would you like to include numeric characters in your password?");
       passwordDetails.criteria.includeSpecial = confirm("Would you like to include special characters in your password?");
-      console.log(`Criteria:\nincludeLowercase: ${passwordDetails.criteria.includeLowercase}\nincludeUppercase: ${passwordDetails.criteria.includeUppercase}\nincludeNumeric: ${passwordDetails.criteria.includeNumeric}\nincludeSpecial: ${passwordDetails.criteria.includeSpecial}\nisCriteriaValid: ${passwordDetails.criteria.isCriteriaValid()}`);
 
       // If they didn't select at least one criteria to include, ask them to retry.
       if (!passwordDetails.criteria.isCriteriaValid()) {
@@ -172,7 +169,6 @@ function getNextPasswordCharacter() {
     // If we're here, we're using either numeric or special.
     passwordCharacter = passwordDetails.datasets[datasetIndex][datasetValueIndex];
   }
-  console.log(`datasets[${datasetIndex}.${criteriaSelection}, ${datasetValueIndex}], PasswordCharacter: ${passwordCharacter}`);
 
   return passwordCharacter;
 }
